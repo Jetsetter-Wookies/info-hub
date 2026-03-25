@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aerial Drone Competition — Mission 2026 Time Warp</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1120;
+    --surface2: #121828;
+    --accent: #00d4ff;
+    --accent2: #ff4d6d;
+    --accent3: #7fff6e;
+    --gold: #ffd166;
+    --text: #e8edf5;
+    --muted: #7a8ba8;
+    --border: rgba(0,212,255,0.15);
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+    --glow2: 0 0 20px rgba(255,77,109,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── GRID BG ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(6,8,16,0.95);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .nav-logo span { color: var(--accent2); }
+
+  /* Desktop scroll strip */
+  .nav-scroll-wrap {
+    flex: 1;
+    overflow-x: auto;
+    margin: 0 1rem;
+    scrollbar-width: none;
+  }
+  .nav-scroll-wrap::-webkit-scrollbar { display: none; }
+
+  .nav-links {
+    display: flex; gap: 0.15rem;
+    list-style: none;
+    white-space: nowrap;
+    padding: 0 0.25rem;
+  }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.74rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.04em;
+    padding: 0.4rem 0.65rem;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+    display: block;
+  }
+  .nav-links a:hover { color: var(--accent); background: rgba(0,212,255,0.07); }
+
+  /* Hamburger — only on mobile */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer;
+    padding: 4px; flex-shrink: 0;
+  }
+  .nav-hamburger span {
+    display: block; width: 22px; height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile drawer */
+  .nav-drawer {
+    position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+    background: rgba(6,8,16,0.98);
+    backdrop-filter: blur(16px);
+    z-index: 199;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+    overflow-y: auto;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-drawer.open { transform: translateX(0); }
+  .nav-drawer ul { list-style: none; display: flex; flex-direction: column; gap: 0.25rem; }
+  .nav-drawer a {
+    display: block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-drawer a:hover { color: var(--accent); background: rgba(0,212,255,0.07); border-color: var(--border); }
+
+  @media (max-width: 820px) {
+    .nav-scroll-wrap { display: none; }
+    .nav-hamburger { display: flex; }
+  }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 80px 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .orb1 { width: 600px; height: 600px; background: rgba(0,212,255,0.08); top: -100px; left: -150px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(255,77,109,0.08); bottom: -50px; right: -100px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 999px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+
+  h1.hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -0.01em;
+    max-width: 900px;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+  h1.hero-title .line1 { display: block; color: var(--text); }
+  h1.hero-title .line2 { display: block; color: var(--accent); }
+  h1.hero-title .line3 { display: block; color: var(--accent2); font-style: italic; }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 600px;
+    line-height: 1.7;
+    animation: fadeDown 0.7s 0.2s ease both;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 2.5rem;
+    animation: fadeDown 0.7s 0.3s ease both;
+  }
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    padding: 0.75rem 1.75rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    box-shadow: var(--glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,212,255,0.5); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeDown 0.7s 0.4s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── SECTIONS ── */
+  section { position: relative; z-index: 1; padding: 5rem 2rem; }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  h2.section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .section-desc { color: var(--muted); max-width: 580px; line-height: 1.75; margin-bottom: 3rem; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.2;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  /* ── MISSIONS GRID ── */
+  .missions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .mission-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .mission-card:hover { transform: translateY(-4px); }
+  .mission-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at top left, rgba(0,212,255,0.05), transparent 60%);
+  }
+
+  .mission-card.red::before { background: radial-gradient(circle at top left, rgba(255,77,109,0.07), transparent 60%); }
+  .mission-card.red { border-color: rgba(255,77,109,0.2); }
+  .mission-card.green::before { background: radial-gradient(circle at top left, rgba(127,255,110,0.07), transparent 60%); }
+  .mission-card.green { border-color: rgba(127,255,110,0.2); }
+  .mission-card.gold::before { background: radial-gradient(circle at top left, rgba(255,209,102,0.07), transparent 60%); }
+  .mission-card.gold { border-color: rgba(255,209,102,0.2); }
+
+  .mission-icon {
+    font-size: 2rem; margin-bottom: 1rem;
+  }
+  .mission-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+  .mission-card.red .mission-tag { background: rgba(255,77,109,0.1); color: var(--accent2); }
+  .mission-card.green .mission-tag { background: rgba(127,255,110,0.1); color: var(--accent3); }
+  .mission-card.gold .mission-tag { background: rgba(255,209,102,0.1); color: var(--gold); }
+
+  .mission-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .mission-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+  .mission-duration {
+    margin-top: 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+
+  /* ── RULES SECTION ── */
+  .rules-cols {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  }
+  @media (max-width: 700px) { .rules-cols { grid-template-columns: 1fr; } }
+
+  .rule-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+  .rule-block h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.05em;
+  }
+  .rule-item {
+    display: flex; gap: 0.75rem; align-items: flex-start;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .rule-text { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── AIRSPACE ── */
+  #airspace { background: var(--surface2); }
+
+  .airspace-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;
+  }
+  .airspace-card {
+    border-radius: 10px;
+    padding: 1.5rem;
+    border-left: 3px solid;
+    background: var(--surface);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .airspace-card .class-badge {
+    font-family: 'Orbitron', monospace;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .airspace-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .airspace-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .airspace-card .atc-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .requires { background: rgba(255,77,109,0.15); color: var(--accent2); }
+  .no-require { background: rgba(127,255,110,0.15); color: var(--accent3); }
+
+  .ca { border-left-color: #ff4d6d; }
+  .cb { border-left-color: #ff7849; }
+  .cc { border-left-color: #ffd166; }
+  .cd { border-left-color: #7fff6e; }
+  .ce { border-left-color: #00d4ff; }
+  .cg { border-left-color: #a78bfa; }
+
+  /* ── PILOT TIPS ── */
+  .tips-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;
+  }
+  .tip-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex; gap: 1rem;
+  }
+  .tip-icon {
+    font-size: 1.5rem; flex-shrink: 0;
+    width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,212,255,0.08);
+    border-radius: 10px;
+  }
+  .tip-card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .tip-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── SCIENCE ── */
+  #science { background: var(--surface2); }
+
+  .chem-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;
+  }
+  .molecule-card {
+    background: var(--surface);
+    border: 1px solid rgba(127,255,110,0.15);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .mol-formula {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent3);
+    margin-bottom: 0.5rem;
+  }
+  .mol-mass {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .mol-name { font-size: 0.82rem; color: var(--text); }
+
+  .insight-box {
+    background: rgba(0,212,255,0.05);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+    margin-top: 1.5rem;
+  }
+  .insight-box .icon { font-size: 1.5rem; flex-shrink: 0; }
+  .insight-box p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+  .insight-box strong { color: var(--text); }
+
+  /* ── METAR / WEATHER ── */
+  .metar-box {
+    background: var(--surface);
+    border: 1px solid rgba(255,209,102,0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  .metar-box h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  .metar-example {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 6px;
+    color: var(--accent3);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .metar-key { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+  .metar-item { display: flex; gap: 0.6rem; align-items: flex-start; }
+  .metar-item .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    background: rgba(255,209,102,0.1);
+    color: var(--gold);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .metar-item span { font-size: 0.8rem; color: var(--muted); }
+
+  /* ── LOGBOOK ── */
+  .logbook-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  }
+  @media (max-width: 700px) { .logbook-grid { grid-template-columns: 1fr; } }
+
+  .logbook-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+  }
+  .logbook-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+  .logbook-list { list-style: none; }
+  .logbook-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex; gap: 0.5rem; align-items: flex-start;
+    line-height: 1.5;
+  }
+  .logbook-list li::before {
+    content: '→';
+    color: var(--accent);
+    font-family: monospace;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .logbook-list li:last-child { border-bottom: none; }
+
+  /* ── INTERVIEW ── */
+  #interview { background: var(--surface2); }
+
+  .interview-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
+  }
+  .interview-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+  }
+  .interview-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.05em;
+  }
+  .q-list { list-style: none; }
+  .q-list li {
+    font-size: 0.84rem;
+    color: var(--muted);
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.5;
+  }
+  .q-list li::before {
+    content: 'Q';
+    position: absolute; left: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    top: 0.7rem;
+  }
+  .q-list li:last-child { border-bottom: none; }
+
+  /* ── SAFETY ── */
+  .safety-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;
+  }
+  .safety-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,77,109,0.15);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .safety-card .s-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .safety-card h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    color: var(--accent2);
+    margin-bottom: 0.5rem;
+  }
+  .safety-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+  footer p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── HIGHLIGHT STRIP ── */
+  .highlight-strip {
+    background: linear-gradient(90deg, rgba(0,212,255,0.08), rgba(255,77,109,0.08));
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex; gap: 2rem; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    margin-bottom: 3rem;
+  }
+  .highlight-strip h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .highlight-strip p { color: var(--muted); font-size: 0.88rem; margin-top: 0.4rem; }
+
+  /* ── A-Z PANEL ── */
+  .az-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+    background: var(--surface2);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+  .az-terms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    padding: 1px;
+  }
+  .az-term-card {
+    background: var(--surface);
+    padding: 1.1rem 1.25rem;
+    transition: background 0.15s;
+  }
+  .az-term-card:hover { background: rgba(0,212,255,0.04); }
+  .az-term-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+  .az-term-def {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* mobile nav handled above */
+  /* ── A-Z GLOSSARY ── */
+  #glossary { background: var(--bg); }
+
+  .az-intro {
+    background: linear-gradient(90deg, rgba(0,212,255,0.06), rgba(127,255,110,0.04));
+    border: 1px solid rgba(0,212,255,0.12);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .az-intro strong { color: var(--accent); }
+
+  .az-letter-grid {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .az-jump {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .az-jump:hover, .az-jump.has-terms { color: var(--accent); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.07); }
+  .az-jump.no-terms { opacity: 0.3; cursor: default; pointer-events: none; }
+
+  .az-group { margin-bottom: 1rem; }
+
+  .az-letter-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+    gap: 1rem;
+  }
+  .az-letter-btn:hover { border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.04); }
+  .az-letter-btn.active { border-color: var(--accent); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+  .az-btn-left { display: flex; align-items: center; gap: 1rem; }
+  .az-letter-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    width: 32px; text-align: center;
+  }
+  .az-letter-title { font-size: 0.85rem; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 0.05em; }
+  .az-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+  }
+  .az-chevron {
+    font-size: 0.8rem;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .az-letter-btn.active .az-chevron { transform: rotate(180deg); }
+
+
+
+  .az-term-list { list-style: none; }
+  .az-term-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .az-term-item:last-child { border-bottom: none; }
+  .az-term-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    padding-top: 2px;
+  }
+  .az-term-def { font-size: 0.84rem; color: var(--muted); line-height: 1.65; }
+
+  @media (max-width: 600px) {
+    .az-term-item { grid-template-columns: 1fr; gap: 0.4rem; }
+    .az-term-name { font-size: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">ADC <span>//</span> RECF</a>
+  <div class="nav-scroll-wrap">
+    <ul class="nav-links">
+      <li><a href="#missions">Missions</a></li>
+      <li><a href="#rules">Rules</a></li>
+      <li><a href="#airspace">Airspace</a></li>
+      <li><a href="#tips">Pilot Tips</a></li>
+      <li><a href="#science">Science</a></li>
+      <li><a href="#logbook">Logbook</a></li>
+      <li><a href="#interview">Interview</a></li>
+      <li><a href="#safety">Safety</a></li>
+      <li><a href="#glossary">A-Z Terms</a></li>
+    </ul>
+  </div>
+  <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE DRAWER -->
+<div class="nav-drawer" id="navDrawer">
+  <ul>
+    <li><a href="#missions" class="drawer-link">🚁 Missions</a></li>
+    <li><a href="#rules" class="drawer-link">📜 Rules</a></li>
+    <li><a href="#airspace" class="drawer-link">✈️ Airspace</a></li>
+    <li><a href="#tips" class="drawer-link">🕹️ Pilot Tips</a></li>
+    <li><a href="#science" class="drawer-link">🔬 Science</a></li>
+    <li><a href="#logbook" class="drawer-link">📋 Logbook</a></li>
+    <li><a href="#interview" class="drawer-link">🎤 Interview</a></li>
+    <li><a href="#safety" class="drawer-link">🛡️ Safety</a></li>
+    <li><a href="#glossary" class="drawer-link">🔤 A-Z Drone Terms</a></li>
+  </ul>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-orb orb1"></div>
+  <div class="hero-orb orb2"></div>
+
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    RECF &nbsp;·&nbsp; MISSION 2026 TIME WARP &nbsp;·&nbsp; V3.0
+  </div>
+
+  <h1 class="hero-title">
+    <span class="line1">AERIAL DRONE</span>
+    <span class="line2">COMPETITION</span>
+    <span class="line3">Mission 2026 Time Warp</span>
+  </h1>
+
+  <p class="hero-sub">
+    The REC Foundation's Aerial Drone Competition provides a hands-on STEM experience—fostering drone piloting, programming, teamwork, and real-world problem-solving skills. Everything you need to compete, in one place.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#missions" class="btn btn-primary">↓ Explore Missions</a>
+    <a href="https://drones.recf.org" target="_blank" class="btn btn-secondary">↗ RECF Official Site</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Missions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">90s</div>
+      <div class="stat-label">Teamwork Match</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3min</div>
+      <div class="stat-label">Autonomous Skills</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">60s</div>
+      <div class="stat-label">Piloting Skills</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3×</div>
+      <div class="stat-label">Max Matches/Event</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MISSIONS -->
+<section id="missions">
+  <div class="container">
+    <div class="section-label">// THE FOUR MISSIONS</div>
+    <h2 class="section-title">How the Competition Works</h2>
+    <p class="section-desc">Teams compete across four distinct missions that test piloting, programming, documentation, and communication skills.</p>
+
+    <div class="missions-grid">
+      <div class="mission-card">
+        <div class="mission-icon">🤝</div>
+        <div class="mission-tag">TEAMWORK</div>
+        <h3>Teamwork Mission</h3>
+        <p>Two Drone Teams compete as an Alliance in fast-paced Matches, working together to score points by clearing zones, completing warp loops, and landing precisely.</p>
+        <div class="mission-duration">⏱ 90 seconds per Match · Alliance of 2</div>
+      </div>
+
+      <div class="mission-card red">
+        <div class="mission-icon">🤖</div>
+        <div class="mission-tag">AUTONOMOUS</div>
+        <h3>Autonomous Flight Skills</h3>
+        <p>Students program their Drone to operate fully autonomously—no human control allowed. Fly through gates, tunnels, panels, and identify color mats to earn points.</p>
+        <div class="mission-duration">⏱ 3 minutes · Up to 3 Matches/event</div>
+      </div>
+
+      <div class="mission-card green">
+        <div class="mission-icon">🕹️</div>
+        <div class="mission-tag">PILOTING SKILLS</div>
+        <h3>Piloting Skills Mission</h3>
+        <p>Navigate an obstacle course with precision. Fly through, under, and around various challenges to score as many points as possible. A calm, focused pilot wins.</p>
+        <div class="mission-duration">⏱ 60 seconds · Up to 3 Matches/event</div>
+      </div>
+
+      <div class="mission-card gold">
+        <div class="mission-icon">📋</div>
+        <div class="mission-tag">COMMUNICATIONS</div>
+        <h3>Communications Mission</h3>
+        <p>Submit your Competition Logbook and sit for a judge interview. Teams answer questions about management, coding strategies, STEM connections, and career links.</p>
+        <div class="mission-duration">📓 Logbook + 🎤 Interview</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RULES -->
+<section id="rules">
+  <div class="container">
+    <div class="section-label">// OFFICIAL RULES</div>
+    <h2 class="section-title">Quick Reference Rules</h2>
+    <p class="section-desc">The Head Referee has ultimate authority. Rules are designed for fair play—if something isn't explicitly prohibited, it's generally legal.</p>
+
+    <div class="rules-cols">
+      <div class="rule-block">
+        <h3>⚙️ DRONE RULES</h3>
+        <div class="rule-item">
+          <span class="rule-code">&lt;D1&gt;</span>
+          <span class="rule-text">Teams must use the CoDrone EDU, CoDrone EDU JROTC Edition, or Parrot Mambo.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;D2&gt;</span>
+          <span class="rule-text">Teams may not modify the Drone or Drone electronics.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;D3&gt;</span>
+          <span class="rule-text">Decorations are allowed on the drone.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;D4&gt;</span>
+          <span class="rule-text">Drones must be running current firmware before competition.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;D5&gt;</span>
+          <span class="rule-text">There is a distinction between accidentally and willfully violating a Drone rule.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;S7&gt;</span>
+          <span class="rule-text">Batteries must be charged (above 80%) before launch for maximum efficiency.</span>
+        </div>
+      </div>
+
+      <div class="rule-block">
+        <h3>🏆 TOURNAMENT RULES</h3>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T1&gt;</span>
+          <span class="rule-text">Head Referee has ultimate authority on all ruling decisions during Matches.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T4&gt;</span>
+          <span class="rule-text">Only one Drone permitted at the Field at a time.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T5&gt;</span>
+          <span class="rule-text">Flight Team Members are the only Team members allowed at the field.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T6&gt;</span>
+          <span class="rule-text">Electronic communication devices are prohibited during a Match.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T11&gt;</span>
+          <span class="rule-text">Scoring is evaluated after the Match has ended.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;G1&gt;</span>
+          <span class="rule-text">Treat everyone with respect at all times.</span>
+        </div>
+      </div>
+
+      <div class="rule-block">
+        <h3>👥 GENERAL + STUDENT RULES</h3>
+        <div class="rule-item">
+          <span class="rule-code">&lt;G2&gt;</span>
+          <span class="rule-text">The Aerial Drone Competition is a Student-centered program.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;G3&gt;</span>
+          <span class="rule-text">Use common sense. All work must reflect the actual skill level of the Team's Students.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;G4&gt;</span>
+          <span class="rule-text">Each Student can only belong to one Team per season.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T18&gt;</span>
+          <span class="rule-text">Each Team will be scheduled for at least 4 Qualification Matches.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T19&gt;</span>
+          <span class="rule-text">Teams are ranked by their average qualification Match scores.</span>
+        </div>
+      </div>
+
+      <div class="rule-block">
+        <h3>✅ ALLIANCE &amp; ELIMINATION</h3>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T20&gt;</span>
+          <span class="rule-text">Alliance Selection process forms 2-Team Alliances for Elimination Matches.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T21&gt;</span>
+          <span class="rule-text">Send a Team representative to Alliance Selection—don't miss it!</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T22&gt;</span>
+          <span class="rule-text">Each Team may only be invited once to join an Alliance.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T24&gt;</span>
+          <span class="rule-text">Elimination Matches are played sequentially in rounds.</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-code">&lt;T3&gt;</span>
+          <span class="rule-text">Flight Team Members are permitted to immediately appeal the Head Referee's ruling.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- AIRSPACE FAA -->
+<section id="airspace">
+  <div class="container">
+    <div class="section-label">// FAA AIRSPACE KNOWLEDGE</div>
+    <h2 class="section-title">Understanding Airspace</h2>
+    <p class="section-desc">Real-world FAA airspace classifications are part of the ADC curriculum. Know where drones can and cannot fly—and when ATC permission is required.</p>
+
+    <div style="margin-bottom:1.5rem;">
+      <p style="font-size:0.88rem; color:var(--muted); background:var(--surface); padding:1rem 1.25rem; border-radius:8px; border:1px solid var(--border); line-height:1.7;">
+        <strong style="color:var(--accent)">CONTROLLED AIRSPACE</strong> — Classes A through E require varying levels of ATC communication and approval. 
+        <strong style="color:var(--accent2)">UNCONTROLLED AIRSPACE</strong> — Class G is generally free to operate in without ATC unless a control tower is present.
+      </p>
+    </div>
+
+    <div class="airspace-grid">
+      <div class="airspace-card ca">
+        <div class="class-badge" style="color:#ff4d6d">A</div>
+        <h4>Class A — High Altitude</h4>
+        <p>Above Class E / above 18,000 ft MSL. Requires ATC permission. Instrument Flight Rules apply.</p>
+        <span class="atc-badge requires">⚠ ATC PERMISSION REQUIRED</span>
+      </div>
+
+      <div class="airspace-card cb">
+        <div class="class-badge" style="color:#ff7849">B</div>
+        <h4>Class B — Major Airports</h4>
+        <p>From surface to 10,000 ft MSL surrounding major airports like ORD or LAX. Requires ATC clearance.</p>
+        <span class="atc-badge requires">⚠ ATC PERMISSION REQUIRED</span>
+      </div>
+
+      <div class="airspace-card cc">
+        <div class="class-badge" style="color:#ffd166">C</div>
+        <h4>Class C — Medium Airports</h4>
+        <p>Extends to 4,000 ft AGL around medium-sized airports. Two-way radio communication required.</p>
+        <span class="atc-badge requires">⚠ ATC PERMISSION REQUIRED</span>
+      </div>
+
+      <div class="airspace-card cd">
+        <div class="class-badge" style="color:#7fff6e">D</div>
+        <h4>Class D — Minor Airports</h4>
+        <p>Less than 2,500 ft AGL for airports with a control tower. Must establish radio contact before entering.</p>
+        <span class="atc-badge requires">⚠ ATC PERMISSION REQUIRED</span>
+      </div>
+
+      <div class="airspace-card ce">
+        <div class="class-badge" style="color:#00d4ff">E</div>
+        <h4>Class E — General Airspace</h4>
+        <p>Below 18,000 ft MSL. General controlled airspace that does NOT require ATC permission unless temporary VIP airspace is active.</p>
+        <span class="atc-badge no-require">✓ GENERALLY NO ATC NEEDED</span>
+      </div>
+
+      <div class="airspace-card cg">
+        <div class="class-badge" style="color:#a78bfa">G</div>
+        <h4>Class G — Uncontrolled</h4>
+        <p>700 or 1,200 ft AGL, can extend to 14,500 ft MSL in remote areas. Usually drone-friendly without ATC—unless a control tower is present.</p>
+        <span class="atc-badge no-require">✓ NO ATC NEEDED (generally)</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem; background:var(--surface); border:1px solid rgba(255,77,109,0.2); border-radius:10px; padding:1.5rem;">
+      <h3 style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--accent2); margin-bottom:1rem;">🚫 SPECIAL RESTRICTIONS</h3>
+      <p style="font-size:0.88rem; color:var(--muted); line-height:1.75;">
+        <strong style="color:var(--text)">Temporary VIP Airspace:</strong> The outer ring requires ATC permission and mandates you be "talking and squawking" with ATC — meaning active two-way radio communication while on an IFR or VFR flight plan. The inner ring is typically a no-fly zone entirely.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PILOT TIPS -->
+<section id="tips">
+  <div class="container">
+    <div class="section-label">// PILOT FIELD NOTES</div>
+    <h2 class="section-title">Tips from the Flight Deck</h2>
+    <p class="section-desc">Practical wisdom gathered from real competition experience. Study these before you fly.</p>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🧱</div>
+        <div>
+          <h4>Avoid Walls & Corners</h4>
+          <p>Walls and corners restrict airflow around the drone, making it harder to control and increasing crash risk. Stay in open air whenever possible.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">🔋</div>
+        <div>
+          <h4>Keep Batteries Above 80%</h4>
+          <p>Batteries below 80% noticeably reduce drone efficiency, responsiveness, and stability. Always check charge level before a match or practice session.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">✈️</div>
+        <div>
+          <h4>Pre-Flight Checklist</h4>
+          <p>A thorough pre-flight check (per rule &lt;S4&gt;) is required at competitions—but treat it as great practice every single time you fly to build strong habits.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">😌</div>
+        <div>
+          <h4>A Calm Pilot Wins</h4>
+          <p>Logging crashes helps identify your team's most consistent pilot. Panic leads to overcorrection. The best pilots stay composed under pressure.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">📊</div>
+        <div>
+          <h4>Log Every Crash</h4>
+          <p>Crash logs are a powerful team tool. Track who was flying, what happened, and how to prevent it. Data-driven improvement separates good teams from great ones.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">🏔️</div>
+        <div>
+          <h4>Stuck Drones & Ramps</h4>
+          <p>A stuck drone won't generate enough thrust to climb a ramp. If you're not clearing obstacles, check battery level and ensure the drone isn't wedged against a surface.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">💻</div>
+        <div>
+          <h4>Trial & Error for Coders</h4>
+          <p>For autonomous flight, trial and error is your primary tool. Iterate fast, test often, and document what works. Don't assume—test it on the field.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-icon">👁️</div>
+        <div>
+          <h4>Visual Observer is Key</h4>
+          <p>Your Visual Observer is your second pair of eyes. Communication between pilot and VO during a match can prevent crashes and improve navigation accuracy.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCIENCE -->
+<section id="science">
+  <div class="container">
+    <div class="section-label">// STEM CONNECTIONS</div>
+    <h2 class="section-title">Science & Engineering</h2>
+    <p class="section-desc">Chemistry and physics directly affect drone performance. Understanding molecular weights helps explain how humidity and air composition impact your flights.</p>
+
+    <h3 style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--accent3); margin-bottom:1.25rem;">ATMOSPHERIC MOLECULES & DRONE LIFT</h3>
+    <div class="chem-grid">
+      <div class="molecule-card">
+        <div class="mol-formula">N₂</div>
+        <div class="mol-mass">14 × 2 = 28 au</div>
+        <div class="mol-name">Nitrogen<br><span style="color:var(--muted);font-size:0.75rem;">Main component of air (~78%)</span></div>
+      </div>
+      <div class="molecule-card">
+        <div class="mol-formula">O₂</div>
+        <div class="mol-mass">16 × 2 = 32 au</div>
+        <div class="mol-name">Oxygen<br><span style="color:var(--muted);font-size:0.75rem;">Vital for combustion (~21%)</span></div>
+      </div>
+      <div class="molecule-card">
+        <div class="mol-formula">CO₂</div>
+        <div class="mol-mass">16×2 + 12 = 44 au</div>
+        <div class="mol-name">Carbon Dioxide<br><span style="color:var(--muted);font-size:0.75rem;">Heaviest common gas in air</span></div>
+      </div>
+      <div class="molecule-card">
+        <div class="mol-formula">H₂O</div>
+        <div class="mol-mass">1×2 + 16 = 18 au</div>
+        <div class="mol-name">Water Vapor<br><span style="color:var(--muted);font-size:0.75rem;">Replaces heavier N₂/O₂ molecules</span></div>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <div class="icon">💡</div>
+      <p>
+        <strong>Why humidity affects drone control:</strong> Water vapor (H₂O at 18 au) is significantly <em>lighter</em> than N₂ (28 au) and O₂ (32 au). When humidity is high, water molecules displace heavier air molecules, making the air less dense. Less dense air means less lift for the same rotor speed. <strong>Higher humidity = harder to control the drone</strong>, especially during precision maneuvers.
+      </p>
+    </div>
+
+    <!-- METAR -->
+    <div class="metar-box">
+      <h3>📡 METAR — METEOROLOGICAL AERODROME REPORT</h3>
+      <p style="font-size:0.84rem; color:var(--muted); margin-bottom:1rem; line-height:1.6;">Standard format for hourly or special surface weather observations at airports. Reading a METAR helps your team understand flight conditions before competition day.</p>
+      <div class="metar-example">METAR KORD 241556Z 27015KT 10SM FEW045 BKN200 18/07 A3012 RMK AO2</div>
+      <div class="metar-key">
+        <div class="metar-item"><span class="tag">Station</span><span>Airport ID (e.g. KORD = Chicago O'Hare)</span></div>
+        <div class="metar-item"><span class="tag">241556Z</span><span>Day 24, time 1556 UTC (Zulu)</span></div>
+        <div class="metar-item"><span class="tag">27015KT</span><span>Wind from 270° at 15 knots</span></div>
+        <div class="metar-item"><span class="tag">10SM</span><span>Visibility 10 statute miles</span></div>
+        <div class="metar-item"><span class="tag">FEW045</span><span>Few clouds at 4,500 ft AGL</span></div>
+        <div class="metar-item"><span class="tag">BKN200</span><span>Broken ceiling at 20,000 ft</span></div>
+        <div class="metar-item"><span class="tag">18/07</span><span>Temp 18°C / Dewpoint 7°C</span></div>
+        <div class="metar-item"><span class="tag">A3012</span><span>Altimeter setting 30.12 inHg</span></div>
+        <div class="metar-item"><span class="tag">RMK AO2</span><span>Remarks: automated station with precip sensor</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- LOGBOOK -->
+<section id="logbook">
+  <div class="container">
+    <div class="section-label">// COMMUNICATIONS MISSION</div>
+    <h2 class="section-title">Competition Logbook</h2>
+    <p class="section-desc">The Competition Logbook is submitted as part of the Communications Mission. Judges score it using a formal rubric—treat it as a living document throughout the season.</p>
+
+    <div class="highlight-strip">
+      <div>
+        <h3>Getting Started with the Logbook</h3>
+        <p>Teams must use the RECFevents platform to manage and submit their logbook. Your logbook is your team's story—document everything from day one.</p>
+      </div>
+      <a href="https://adc-kb.recf.org/hc/en-us/articles/26272237005719-Getting-Started-with-Competition-Logbook" target="_blank" class="btn btn-primary" style="flex-shrink:0;">↗ Official Guide</a>
+    </div>
+
+    <div class="logbook-grid">
+      <div class="logbook-card">
+        <h3>📋 WHAT TO DOCUMENT</h3>
+        <ul class="logbook-list">
+          <li>Team management structure and roles</li>
+          <li>Meeting notes and session logs</li>
+          <li>Piloting practice sessions and crash logs</li>
+          <li>Autonomous coding progress and iterations</li>
+          <li>Strategy development and match planning</li>
+          <li>STEM/career connections made by team</li>
+          <li>Outreach and community involvement activities</li>
+          <li>Pre-flight checklist records</li>
+          <li>Battery logs and maintenance records</li>
+        </ul>
+      </div>
+
+      <div class="logbook-card">
+        <h3>🏅 RUBRIC CATEGORIES</h3>
+        <ul class="logbook-list">
+          <li>Team Identity — name, logo, member roles</li>
+          <li>Team Management — organization, planning, meetings</li>
+          <li>Drone Piloting — practice records, improvement</li>
+          <li>Autonomous Coding — development process, documentation</li>
+          <li>Game Strategy — match analysis and planning</li>
+          <li>STEM Connections — science and engineering tie-ins</li>
+          <li>Career Awareness — careers explored by the team</li>
+          <li>Consistency — regular updates throughout season</li>
+          <li>Quality — clarity, thoroughness, professionalism</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INTERVIEW -->
+<section id="interview">
+  <div class="container">
+    <div class="section-label">// JUDGE INTERVIEW PREP</div>
+    <h2 class="section-title">Team Interview Tips</h2>
+    <p class="section-desc">During the Communications Mission, judges will interview your team. Preparation is key. Study these sample questions and practice as a team before competition day.</p>
+
+    <div class="interview-grid">
+      <div class="interview-card">
+        <h3>🧠 TEAM MANAGEMENT</h3>
+        <ul class="q-list">
+          <li>How does your team divide roles and responsibilities?</li>
+          <li>How do you resolve disagreements within the team?</li>
+          <li>Describe your team's meeting schedule and how you track progress.</li>
+          <li>What would you do differently if you could start the season over?</li>
+          <li>Who is your team leader and how were they selected?</li>
+        </ul>
+      </div>
+
+      <div class="interview-card">
+        <h3>💻 CODING & AUTONOMOUS</h3>
+        <ul class="q-list">
+          <li>Walk us through your autonomous flight code. How does it work?</li>
+          <li>What was the hardest coding challenge you faced, and how did you solve it?</li>
+          <li>How did you test and iterate your autonomous program?</li>
+          <li>What sensors does your drone use and how did you code around them?</li>
+          <li>How did trial and error shape your autonomous strategy?</li>
+        </ul>
+      </div>
+
+      <div class="interview-card">
+        <h3>🎯 STRATEGY & COMPETITION</h3>
+        <ul class="q-list">
+          <li>What is your team's strategy for the Teamwork Mission?</li>
+          <li>How do you choose which missions to prioritize?</li>
+          <li>How do you communicate with your Alliance partner?</li>
+          <li>Describe a match where things didn't go as planned and how you adapted.</li>
+          <li>What makes your team's piloting approach unique?</li>
+        </ul>
+      </div>
+
+      <div class="interview-card">
+        <h3>🚀 STEM & CAREERS</h3>
+        <ul class="q-list">
+          <li>What STEM concepts have you applied in this competition?</li>
+          <li>Which careers has this program made you interested in?</li>
+          <li>How has chemistry or physics affected your drone flying?</li>
+          <li>What would you study in college to pursue a career in drones?</li>
+          <li>How does the FAA airspace system connect to real-world aviation?</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem; background:var(--surface); border:1px solid rgba(0,212,255,0.15); border-radius:10px; padding:1.5rem;">
+      <h3 style="font-family:'Orbitron',monospace; font-size:0.85rem; color:var(--accent); margin-bottom:1rem;">💡 INTERVIEW BEST PRACTICES</h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:1rem;">
+        <div style="font-size:0.84rem; color:var(--muted); line-height:1.6;"><strong style="color:var(--text)">Prepare specific examples</strong> — Don't speak in general terms. Tell judges exactly what happened and what you learned.</div>
+        <div style="font-size:0.84rem; color:var(--muted); line-height:1.6;"><strong style="color:var(--text)">Reference your logbook</strong> — Judges will have it. Know your own entries and be ready to expand on them.</div>
+        <div style="font-size:0.84rem; color:var(--muted); line-height:1.6;"><strong style="color:var(--text)">All voices matter</strong> — Judges want to hear from every team member. Practice answering as a group, not just one spokesperson.</div>
+        <div style="font-size:0.84rem; color:var(--muted); line-height:1.6;"><strong style="color:var(--text)">Embrace what went wrong</strong> — Growth stories are powerful. Sharing failures and how you overcame them impresses judges more than pretending everything was perfect.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SAFETY -->
+<section id="safety">
+  <div class="container">
+    <div class="section-label">// SAFETY FIRST</div>
+    <h2 class="section-title">Safety Rules & Protocols</h2>
+    <p class="section-desc">Safety is non-negotiable. Violations can result in a team being Grounded — required to land immediately and stop flying for the remainder of the match.</p>
+
+    <div class="safety-grid">
+      <div class="safety-card">
+        <div class="s-icon">🛬</div>
+        <h4>&lt;S1&gt; FLIGHT ZONES ONLY</h4>
+        <p>Teams may only fly their Drone in a designated Flight Zone. Never fly outside sanctioned areas.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">👩‍🏫</div>
+        <h4>&lt;S2&gt; ADULT SUPERVISION</h4>
+        <p>Students must be accompanied by an Adult at all times when operating the drone.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">🛑</div>
+        <h4>&lt;S3&gt; GROUNDED RULE</h4>
+        <p>If a Team is Grounded by a referee, they must land immediately — no exceptions, no delays.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">📝</div>
+        <h4>&lt;S4&gt; PRE-FLIGHT CHECK</h4>
+        <p>Teams must pass Flight Clearance Inspection and complete the Pre-Flight Checklist before every competition match.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">🕹️</div>
+        <h4>&lt;S5&gt; STAY IN STATION</h4>
+        <p>Flight Team Members must stay in the Pilot station or Visual Observer stations. Never enter the field during a Match.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">✈️</div>
+        <h4>&lt;S6&gt; STAY IN CONTROL</h4>
+        <p>Maintain positive control of your Drone at all times. If you lose control, attempt to land safely immediately.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">😎</div>
+        <h4>&lt;S8&gt; SAFETY GLASSES</h4>
+        <p>All participants in the flight zone must wear safety glasses. This is mandatory and non-negotiable.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">🏗️</div>
+        <h4>&lt;S10&gt; NO STANDING ON OBJECTS</h4>
+        <p>Flight Team Members may not stand on chairs, boxes, or any objects during a match.</p>
+      </div>
+      <div class="safety-card">
+        <div class="s-icon">📋</div>
+        <h4>&lt;S11&gt; RELEASE FORMS</h4>
+        <p>Every Student Team member must have a completed participant release form on file for the event and current season.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- A-Z GLOSSARY -->
+<section id="glossary">
+  <div class="container">
+    <div class="section-label">// DRONE VOCABULARY</div>
+    <h2 class="section-title">A–Z Drone Terms</h2>
+    <p class="section-desc">A complete reference glossary of drone terminology. Click any letter to expand the terms for that section.</p>
+
+    <div class="az-intro">
+      <strong>📖 How to use:</strong> Click a letter button below to reveal all drone terms starting with that letter. Each term includes its definition and real-world context. Source: <a href="https://www.propelrc.com/drone-terminology/" target="_blank" style="color:var(--accent);">PropelRC Drone Terminology Guide</a>
+    </div>
+
+    <!-- Jump links -->
+    <div class="az-letter-grid" id="azJumpGrid"></div>
+
+    <!-- Accordion groups -->
+    <div id="azAccordion"></div>
+  </div>
+</section>
+
+<script>
+// ── A-Z GLOSSARY DATA ──
+const glossaryData = {
+  "0-9": [
+    { term: "2.4 GHz Drone Frequency", def: "Transfers data over longer distances than 5.8 GHz but at a slower speed. Better range, lower bandwidth." },
+    { term: "5.8 GHz Drone Frequency", def: "Transfers data more quickly but at a shorter distance. Better for FPV racing where speed matters more than range." }
+  ],
+  "A": [
+    { term: "Accelerometer", def: "Measures the acceleration of the drone in a specific direction. Allows the drone to maintain orientation and stabilize quadcopters." },
+    { term: "AGL (Above Ground Level)", def: "Altitude measured from the ground directly below the aircraft — not sea level. Used in aviation and drone regulations for safety compliance." },
+    { term: "Acro Mode", def: "A flight mode for experienced pilots that disables self-leveling features, enabling advanced maneuvers like flips and rolls. Not for beginners." },
+    { term: "Aircraft", def: "Any vehicle designed for air travel — manned or unmanned — including airplanes, helicopters, and drones." },
+    { term: "Air Traffic Control (ATC)", def: "A service using communication and radar to monitor and direct aircraft movement, ensuring safety and separation in the air." },
+    { term: "AMA (Academy of Model Aeronautics)", def: "A US non-profit that promotes model aviation and works with the FAA to develop guidelines for model aviation." },
+    { term: "Aerial Photography", def: "Photography using camera-equipped drones to capture images and footage from altitude." },
+    { term: "Altitude Hold", def: "A function using an onboard barometer that allows a drone to hover at a specific height automatically." },
+    { term: "Atti Mode", def: "Attitude mode — allows the pilot to manually control pitch and roll while the drone maintains altitude and heading." },
+    { term: "ARF (Almost Ready to Fly)", def: "A drone package that typically does not include a transmitter and may require some assembly." },
+    { term: "Autopilot", def: "The ability of a drone to maintain flight without human intervention, using pre-defined GPS paths or coordinates." },
+    { term: "Autonomous Flight", def: "Drones controlled entirely by pre-set internal programming with GPS instructions — no human input during flight." },
+    { term: "Auto Leveling", def: "Uses onboard sensors to automatically level the drone when roll, pitch, or yaw is detected." },
+    { term: "Axis", def: "A plane of flight. Most quadcopters have four-axis controls; high-end drones have six or more axes." }
+  ],
+  "B": [
+    { term: "Barometric Pressure Sensor", def: "Measures barometric readings to detect the altitude of the drone and calculate height from the ground." },
+    { term: "Binding", def: "The process of pairing the drone to communicate with its controller or transmitter." },
+    { term: "BNF (Bind-N-Fly)", def: "A drone unit ready to be bound to a compatible controller and fly — no transmitter included." },
+    { term: "Brushless Motor", def: "A drone motor with permanent magnets rotating around an armature. More efficient and resilient than brushed motors." },
+    { term: "Build", def: "A drone unit that was custom-built and assembled at home." },
+    { term: "BVLOS (Beyond Visual Line of Sight)", def: "A term used by the FAA describing drone operations where the pilot cannot see the drone with the naked eye." },
+    { term: "Bootloader", def: "A program that loads the main firmware onto the flight controller memory. The first program to run when a drone is powered on." }
+  ],
+  "C": [
+    { term: "Center of Gravity (CG)", def: "The point where the drone weight is evenly distributed. Must be carefully balanced to ensure stable, safe flight." },
+    { term: "Certificate of Authorization (COA)", def: "FAA-issued document allowing a government agency to operate drones in national airspace for specific purposes." },
+    { term: "Camera Gimbal", def: "A motorized mount for cameras that uses servos to tilt and swivel, providing stable footage regardless of drone movement." },
+    { term: "Camera Drone", def: "A drone equipped with a camera for aerial photography and videography." },
+    { term: "CF (Carbon Fiber)", def: "A composite material used in racing drones known for exceptional durability, strength, and light weight." },
+    { term: "Cleanflight", def: "Software that allows drone configuration through a graphical user interface. Popular in the FPV racing community." },
+    { term: "Commercial Flight", def: "Flying a drone for commercial purposes. Requires an FAA Remote Pilot Certificate under Part 107 regulations." },
+    { term: "Controller", def: "A handheld device used to control the drone wirelessly. Also called a radio or transmitter." },
+    { term: "Controlled Airspace", def: "Airspace subject to ATC services — Classes A through E. Drones must obtain ATC permission before operating here." }
+  ],
+  "D": [
+    { term: "DJI", def: "Da-Jiang Innovations — the world largest UAV manufacturer, based in Shenzhen, China." },
+    { term: "Detect and Avoid (DAA)", def: "The capability of a UAS to detect obstacles in its flight path and autonomously take actions to avoid them." },
+    { term: "DJI S Mode (Sports Mode)", def: "Allows the DJI drone to fly and maneuver twice as fast as normal." },
+    { term: "DJI P Mode (Standard Mode)", def: "Standard flight mode with all sensors active including GPS, image, and infrared. Allows precise hovering." },
+    { term: "DJI A Mode (Atti Mode)", def: "Drone flight mode that allows flying without GPS stabilization. Used when GPS signal is weak or unavailable." },
+    { term: "Drone", def: "An aircraft that does not require a human pilot onboard — controlled remotely or by onboard computer." },
+    { term: "Drone Racing League (DRL)", def: "A professional drone racing league that holds and operates international FPV drone races." },
+    { term: "DSMX / DSM2 / DSM", def: "Radio control protocols developed by Spektrum to transmit control signals from transmitter to receiver. DSMX is the most advanced version." }
+  ],
+  "E": [
+    { term: "Electronic Speed Control (ESC)", def: "A device that connects the RC receiver and the main battery to control the motor speed." },
+    { term: "Electromagnetic Interference (EMI)", def: "Electrical interference from external sources that can disrupt drone communication and control signals." },
+    { term: "Elevator (ELEV)", def: "Also called Pitch — controls the forward and backward tilt of the drone." },
+    { term: "Elios", def: "A collision-tolerant drone designed for precise indoor inspection in confined spaces." }
+  ],
+  "F": [
+    { term: "FAA (Federal Aviation Administration)", def: "Part of the US Department of Transportation that regulates and oversees all civil aviation in the United States." },
+    { term: "Fail-Safe", def: "A protective function that triggers when the drone loses its remote control signal, typically returning it to the takeoff location." },
+    { term: "First-Person View (FPV)", def: "A mode where the operator views live footage from the drone in real-time, usually through VR goggles or a screen." },
+    { term: "Firmware", def: "Software loaded into the drone microprocessor non-volatile memory. Determines how the flight controller and autopilot behave." },
+    { term: "Flight Control System", def: "A network of interconnected controllers that allow the pilot to control all aspects of drone flight." },
+    { term: "Fly Away", def: "An unintentional flight outside the boundaries of pilot control, caused by a failure in the onboard system or control device." },
+    { term: "Fly-Away Protection System", def: "A safety function that automatically returns the drone to the surface or within control boundaries if it drifts too far." },
+    { term: "FPV Camera", def: "A specialized camera built for first-person view capabilities. Typically found in racing drones and camera drones." },
+    { term: "FPV Goggles", def: "Special goggles used to view a live feed from the drone camera in real-time." },
+    { term: "FPV Racing", def: "An emerging sport where small, fast racing drones fly around a predetermined track in first-person view." },
+    { term: "Frequency", def: "A specific frequency channel used by FPV equipment. Multiple channels exist so pilots do not interfere with each other during events." }
+  ],
+  "G": [
+    { term: "Geofencing", def: "A virtual geographic boundary created using GPS that allows control software to respond when a drone enters or exits the defined area." },
+    { term: "Gimbal", def: "A special camera mount using servos to allow stable, smooth camera footage regardless of the drone movements." },
+    { term: "GIS (Geographic Information System)", def: "A system for collecting, storing, analyzing, managing, and displaying geographic or spatial data." },
+    { term: "GoPro", def: "A popular brand of compact, lightweight, waterproof high-definition cameras commonly mounted on drones for action footage." },
+    { term: "GPS (Global Positioning System)", def: "A satellite-based system that tracks and identifies the position of an object globally. Used for position hold, waypoints, and autonomous flight." },
+    { term: "GCS (Ground Control Station)", def: "A program running on the ground that receives telemetry data from a UAV and can transmit commands back to it." },
+    { term: "Gyroscope (Gyro)", def: "A device that measures the drone rotation to maintain correct balance with respect to roll, pitch, and yaw. Most quadcopters have triple-axis gyroscopes." }
+  ],
+  "H": [
+    { term: "Head Tracking", def: "A function of VR goggles that moves the drone camera angle by tracking the wearer head movements." },
+    { term: "Headless Mode", def: "A flight mode where the drone follows the control stick direction regardless of which way the drone front end is pointing." },
+    { term: "Hexacopter", def: "A drone with six propellers / rotors." },
+    { term: "Hobby Drone", def: "A mid-sized drone for beginner hobbyists, typically with a built-in camera or payload capability." },
+    { term: "Hobby Grade", def: "A step above toy-grade drones — reliable at a reasonable price point." },
+    { term: "HITRA (High-Intensity Radio Transmission Area)", def: "A specialized radio transmission area providing high-speed, reliable data communication between drone and operator." }
+  ],
+  "I": [
+    { term: "IMU (Inertial Measurement Unit)", def: "Combines a gyroscope and accelerometer to measure acceleration, orientation, and angular velocity for stable navigation." },
+    { term: "INS (Inertial Navigation System)", def: "Calculates the drone position based on initial GPS data, complemented by motion and speed sensors. Useful when GPS signal is lost." },
+    { term: "IOC (Intelligent Orientation Control)", def: "A method where the drone follows the control stick directions regardless of the drone front-end orientation." }
+  ],
+  "J": [
+    { term: "Jello Effect", def: "A video distortion caused by drone vibration. Drones without a quality gimbal are most susceptible to this wavy image artifact." }
+  ],
+  "L": [
+    { term: "LAANC System", def: "Low Altitude Authorization and Notification Capability — provides UAV operators with real-time airspace notifications and auto-approval in controlled airspace." },
+    { term: "LiDAR", def: "Light Detection and Ranging — active laser scanning that maps an object 3D topography. Mounted on GPS-enabled drones for geographic data." },
+    { term: "LiPo (Lithium Polymer)", def: "The most common drone battery technology — lightweight, high-capacity. Can catch fire if overcharged or physically damaged." },
+    { term: "LOS (Line of Sight)", def: "The ability to see the drone you are operating with the naked eye, without optical aids." },
+    { term: "Li-Ion (Lithium Ion Battery)", def: "A rechargeable battery used in some drones known for high energy density, low self-discharge rate, and long cycle life." }
+  ],
+  "M": [
+    { term: "mAh (Milliamp Hour)", def: "A unit measuring battery capacity over time — indicates how much power a battery can provide before recharging." },
+    { term: "Magnetometer", def: "A device that measures magnetic fields. Used in drones to determine heading and compass direction." },
+    { term: "Mini Drone", def: "An inexpensive small drone without camera attachments, suitable for beginners or children learning to fly." },
+    { term: "MSL (Mean Sea Level)", def: "A vertical datum used to measure elevation relative to average sea level. Used in Class A airspace altitude definitions." },
+    { term: "MAV (Micro Air Vehicle)", def: "Small unmanned aerial vehicles typically weighing less than 1 kg, designed for military and civilian applications." },
+    { term: "Mode 1 Transmitters", def: "Controllers with throttle sticks on the right. More popular in the United Kingdom." },
+    { term: "Mode 2 Transmitters", def: "Controllers with throttle sticks on the left. More popular in the United States." },
+    { term: "Multicopter", def: "An umbrella term for any drone with multiple propellers." },
+    { term: "MultiGP", def: "An international drone racing league that manages and governs various radio-controlled racing events worldwide." }
+  ],
+  "N": [
+    { term: "NAZA", def: "A type of flight controller used in DJI Phantom drones, including gyroscope, accelerometer, and barometric altimeter." },
+    { term: "NOTAM (Notice to Airmen)", def: "A notice filed with an aviation authority to alert pilots of potential hazards along a flight route or at a location." },
+    { term: "No-Fly Zone", def: "Areas where drones are prohibited from flying by government mandate — typically includes airports and sensitive areas." }
+  ],
+  "O": [
+    { term: "OAS (Obstacle Avoidance System)", def: "A system that provides immediate alerts to the pilot when the drone is about to collide with an obstacle." },
+    { term: "Octocopter", def: "A drone with 8 propellers or rotors. Provides more lift and redundancy." },
+    { term: "OSD (On-Screen Display)", def: "A graphical interface showing real-time drone flight data such as speed, heading, battery life, altitude, and GPS position." },
+    { term: "Obstacle Avoidance", def: "Technology that helps prevent accidents during flight by allowing drones to navigate around obstacles such as trees and buildings." }
+  ],
+  "P": [
+    { term: "Part 107", def: "FAA regulation covering non-hobbyist UAVs under 55 pounds used for commercial purposes in the United States. Requires Remote Pilot Certificate." },
+    { term: "Payload", def: "The additional weight a drone carries beyond its own weight — such as a camera, gimbal, or sensor package." },
+    { term: "PDB (Power Distribution Board)", def: "A component that distributes power from the battery to all other parts of the drone." },
+    { term: "Photogrammetry", def: "A technique using aerial drone images to create accurate 3D models of structures or terrain." },
+    { term: "Pitch", def: "The forward and backward motion/tilt of the drone along its lateral axis. Controlled by the elevator input." },
+    { term: "Pre-Flight Planning", def: "All preparations before takeoff — safety checks, weather assessment, flight path planning, and equipment inspection." },
+    { term: "Prop", def: "Short for Propeller — the spinning blades that generate thrust and lift." }
+  ],
+  "Q": [
+    { term: "Quadcopter", def: "A drone with exactly four propellers — the most common drone configuration. Also called a quadrotor." }
+  ],
+  "R": [
+    { term: "Raceband", def: "A 5.8 GHz frequency band used in drone racing, designed to support multiple pilots flying simultaneously without interference." },
+    { term: "Racing Drone", def: "A small, agile drone designed specifically for FPV racing with a built-in forward-facing cockpit camera." },
+    { term: "RC / R/C (Radio Controller)", def: "A device that broadcasts on a specific frequency to send control signals to the drone during flight." },
+    { term: "Receiver (Rx)", def: "A device on the drone that accepts control signals from the transmitter." },
+    { term: "Roll", def: "Movement of the drone along its longitudinal axis — tilting left or right, like banking a turn." },
+    { term: "RPAV (Remotely Piloted Aerial Vehicle)", def: "An official formal name for drones." },
+    { term: "Return to Home", def: "A GPS-based feature that automatically returns the drone to its takeoff location when triggered or when signal is lost." },
+    { term: "RTF (Ready to Fly)", def: "A complete drone package with everything needed to fly included — no assembly required." },
+    { term: "Rudder", def: "Controls the horizontal direction the drone is pointing or flying — similar to Yaw." },
+    { term: "RSSI (Received Signal Strength Indicator)", def: "A metric measuring the power level of a received wireless signal, used to gauge connection quality between controller and drone." }
+  ],
+  "S": [
+    { term: "Sense and Avoid", def: "A drone functionality that detects and avoids collisions with obstacles and other aircraft during flight." },
+    { term: "Servo (Servomotor)", def: "A mechanism used in aircraft to perform functions such as panning cameras or deploying flaps." },
+    { term: "sUAS (Small Unmanned Aircraft System)", def: "A drone that weighs less than 55 pounds including any attachments or cargo. FAA Part 107 applies to sUAS." },
+    { term: "SAFE (Sensor Assisted Flight Envelope)", def: "Technology in drones that uses sensors to improve safety and stability during flight, especially for novice pilots." },
+    { term: "Spatial Awareness", def: "The ability to understand and perceive position in a given space — critical for safe drone operation." },
+    { term: "Spotter", def: "A second person who helps an FPV pilot maintain situational awareness by watching the physical drone and warning of obstacles." }
+  ],
+  "T": [
+    { term: "Throttle", def: "The control input that increases or decreases motor speed. Higher throttle = more thrust and lift." },
+    { term: "Thrust", def: "The force generated by the motor and propeller that creates lift to take the drone airborne." },
+    { term: "Toy-Grade", def: "A low-end drone designed for beginners with basic functionality and limited range and features." },
+    { term: "Trim", def: "A fine adjustment made while hovering to compensate for drift and keep the drone in a stable, stationary position." },
+    { term: "Transmitter", def: "The ground-based controller used to send control signals to the drone during flight." },
+    { term: "Telemetry", def: "The process of collecting and transmitting data from the drone — speed, altitude, battery, GPS — to the ground station." },
+    { term: "Temporary Flight Restriction (TFR)", def: "An FAA-issued airspace restriction prohibiting flight in a certain area for a specific period due to safety or security concerns." }
+  ],
+  "U": [
+    { term: "Ultrasonic Sensor", def: "Uses ultrasound to measure the distance between the drone and the ground. Typically works only within a few meters of the surface." },
+    { term: "UAV (Unmanned Aerial Vehicle)", def: "The official FAA term for a drone — any aircraft without a human pilot onboard." },
+    { term: "UAS (Unmanned Aerial Vehicle Systems)", def: "The full system including the UAV itself, land-based control systems, communication systems, and launch mechanisms." },
+    { term: "UTM (Unmanned Traffic Management)", def: "A NASA-coined cloud-based system that manages air traffic at low altitudes to prevent collisions between manned and unmanned craft." },
+    { term: "Uncontrolled Airspace", def: "Airspace without ATC services (Class G). Drones can generally fly here without permission unless a control tower is present." },
+    { term: "Upright Launch", def: "Launching a drone vertically using rotor thrust — the standard launch method for most multirotor drones." }
+  ],
+  "V": [
+    { term: "Video Latency", def: "The lag or delay between what the drone camera captures and what appears on the pilot monitor or goggles." },
+    { term: "VLOS (Visual Line of Sight)", def: "The pilot unaided view from the ground to the drone — no goggles or displays. Required by default under FAA regulations." },
+    { term: "Visual Observer", def: "A crew member who assists the drone pilot in maintaining situational awareness — spotting obstacles, clouds, and other aircraft." },
+    { term: "VTX (Video Transmitter)", def: "A device connected to the drone camera that transmits the video feed wirelessly to the pilot display or goggles on the ground." },
+    { term: "VR Goggles (Virtual Reality Goggles)", def: "A VR headset enabling immersive first-person drone flying, sometimes featuring head tracking to control camera angle." }
+  ],
+  "W": [
+    { term: "Waypoint", def: "A point in space defined by GPS coordinates, used to design automated flight paths for drones in autonomous mode." },
+    { term: "WiFi FPV", def: "Technology on lower-end drones that connects a mobile device to the drone via app to display the live video feed." },
+    { term: "Wingspan", def: "The tip-to-tip measurement of fully extended wings. Affects flight stability and maneuverability." }
+  ],
+  "Y": [
+    { term: "Yaw", def: "A drone rotation around its vertical center axis — turning left or right without changing direction of travel." }
+  ]
+};
+
+// ── BUILD GLOSSARY ──
+(function() {
+  const jumpGrid = document.getElementById('azJumpGrid');
+  const accordion = document.getElementById('azAccordion');
+  const allLetters = ['0-9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+
+  allLetters.forEach(function(letter) {
+    const hasTerms = !!glossaryData[letter];
+    const a = document.createElement('a');
+    a.href = '#';
+    a.className = 'az-jump ' + (hasTerms ? 'has-terms' : 'no-terms');
+    a.textContent = letter;
+    if (hasTerms) {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.getElementById('az-' + letter);
+        if (target) {
+          const btn = target.querySelector('.az-letter-btn');
+          const panel = target.querySelector('.az-panel');
+          if (!btn.classList.contains('active')) {
+            btn.classList.add('active');
+            panel.style.maxHeight = panel.scrollHeight + 'px';
+          }
+          setTimeout(function() { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+        }
+      });
+    }
+    jumpGrid.appendChild(a);
+  });
+
+  Object.keys(glossaryData).forEach(function(letter) {
+    var termList = glossaryData[letter];
+    var group = document.createElement('div');
+    group.className = 'az-group';
+    group.id = 'az-' + letter;
+
+    var preview = termList.slice(0,3).map(function(t){ return t.term.split(' ')[0]; }).join(', ');
+
+    var btn = document.createElement('button');
+    btn.className = 'az-letter-btn';
+    btn.type = 'button';
+    btn.innerHTML =
+      '<div class="az-btn-left">' +
+        '<span class="az-letter-label">' + letter + '</span>' +
+        '<span class="az-letter-title">' + preview + (termList.length > 3 ? '…' : '') + '</span>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:0.75rem;">' +
+        '<span class="az-count">' + termList.length + ' term' + (termList.length !== 1 ? 's' : '') + '</span>' +
+        '<span class="az-chevron">▼</span>' +
+      '</div>';
+
+    var panel = document.createElement('div');
+    panel.className = 'az-panel';
+    panel.style.maxHeight = '0';
+
+    var inner = document.createElement('div');
+    inner.className = 'az-terms-inner';
+
+    termList.forEach(function(t) {
+      var card = document.createElement('div');
+      card.className = 'az-term-card';
+      card.innerHTML = '<div class="az-term-name">' + t.term + '</div><div class="az-term-def">' + t.def + '</div>';
+      inner.appendChild(card);
+    });
+
+    panel.appendChild(inner);
+    group.appendChild(btn);
+    group.appendChild(panel);
+    accordion.appendChild(group);
+
+    btn.addEventListener('click', function() {
+      var isOpen = btn.classList.contains('active');
+      // close all
+      document.querySelectorAll('.az-letter-btn.active').forEach(function(b) {
+        b.classList.remove('active');
+        b.nextElementSibling.style.maxHeight = '0';
+      });
+      if (!isOpen) {
+        btn.classList.add('active');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+})();
+
+// ── HAMBURGER NAV ──
+(function() {
+  var btn = document.getElementById('hamburger');
+  var drawer = document.getElementById('navDrawer');
+  if (!btn || !drawer) return;
+  btn.addEventListener('click', function() {
+    btn.classList.toggle('open');
+    drawer.classList.toggle('open');
+    document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+  });
+  document.querySelectorAll('.drawer-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+      btn.classList.remove('open');
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+})();
+</script>
+
+<footer>
+  <div class="footer-logo">ADC // RECF</div>
+  <p>
+    <strong>Aerial Drone Competition</strong> — Robotics Education &amp; Competition Foundation<br>
+    Mission 2026 Time Warp · Version 3.0 · <a href="https://drones.recf.org" target="_blank">drones.recf.org</a><br><br>
+    Official Q&amp;A: <a href="https://recf.org/adc-official-q-and-a" target="_blank">recf.org/adc-official-q-and-a</a> &nbsp;·&nbsp;
+    Knowledge Base: <a href="https://adc-kb.recf.org" target="_blank">adc-kb.recf.org</a><br><br>
+    <span style="opacity:0.5; font-size:0.75rem;">This site is a student team reference compiled from official RECF materials. Always refer to the current official Competition Manual for authoritative rules.</span>
+  </p>
+</footer>
+</body>
+</html>

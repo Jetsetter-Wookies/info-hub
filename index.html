@@ -673,38 +673,40 @@
   .az-panel {
     max-height: 0;
     overflow: hidden;
-    opacity: 0;
-    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+    transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
     background: var(--surface2);
     border: 1px solid rgba(0,212,255,0.2);
     border-top: none;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
   }
-  .az-terms-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1px;
-    padding: 1px;
-  }
+  .az-terms-inner { padding: 0.25rem 0; }
   .az-term-card {
-    background: var(--surface);
-    padding: 1.1rem 1.25rem;
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1rem;
+    align-items: start;
     transition: background 0.15s;
   }
+  .az-term-card:last-child { border-bottom: none; }
   .az-term-card:hover { background: rgba(0,212,255,0.04); }
   .az-term-name {
     font-family: 'Space Mono', monospace;
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: var(--accent);
-    margin-bottom: 0.4rem;
     letter-spacing: 0.02em;
+    padding-top: 2px;
   }
   .az-term-def {
     font-size: 0.83rem;
     color: var(--muted);
-    line-height: 1.6;
+    line-height: 1.65;
+  }
+  @media (max-width: 600px) {
+    .az-term-card { grid-template-columns: 1fr; gap: 0.3rem; }
   }
 
   /* mobile nav handled above */
@@ -1679,7 +1681,7 @@ const glossaryData = {
           const panel = target.querySelector('.az-panel');
           if (!btn.classList.contains('active')) {
             btn.classList.add('active');
-            panel.style.maxHeight = panel.scrollHeight + 'px';
+            panel.style.maxHeight = '9999px';
           }
           setTimeout(function() { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
         }
@@ -1730,14 +1732,15 @@ const glossaryData = {
 
     btn.addEventListener('click', function() {
       var isOpen = btn.classList.contains('active');
-      // close all
+      // close all open panels
       document.querySelectorAll('.az-letter-btn.active').forEach(function(b) {
         b.classList.remove('active');
         b.nextElementSibling.style.maxHeight = '0';
       });
       if (!isOpen) {
         btn.classList.add('active');
-        panel.style.maxHeight = panel.scrollHeight + 'px';
+        // use large fixed max-height so transition works without needing scrollHeight
+        panel.style.maxHeight = '9999px';
       }
     });
   });

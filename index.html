@@ -570,7 +570,8 @@
   .logbook-list li:last-child { border-bottom: none; }
 
   /* ── INTERVIEW ── */
-  #interview { background: var(--surface2); }
+  #logbook { background: var(--surface2); }
+  #interview { background: var(--bg); }
 
   .interview-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;
@@ -711,6 +712,7 @@
 
   /* mobile nav handled above */
   /* ── A-Z GLOSSARY ── */
+  #safety { background: var(--surface2); }
   #glossary { background: var(--bg); }
 
   .az-intro {
@@ -813,6 +815,273 @@
     .az-term-item { grid-template-columns: 1fr; gap: 0.4rem; }
     .az-term-name { font-size: 0.75rem; }
   }
+
+  /* ── CODRONE EDU SENSORS ── */
+  #codrone { background: var(--bg); }
+
+  .codrone-header-strip {
+    background: linear-gradient(135deg, rgba(127,255,110,0.06), rgba(0,212,255,0.06));
+    border: 1px solid rgba(127,255,110,0.15);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 3rem;
+    display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;
+  }
+  .codrone-header-strip .drone-badge {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--accent3);
+    background: rgba(127,255,110,0.1);
+    border: 1px solid rgba(127,255,110,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .codrone-header-strip p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+  /* sensor map grid */
+  .sensor-map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+  .sensor-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .sensor-card:hover { transform: translateY(-3px); }
+  .sensor-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  .sensor-card.green::before { background: var(--accent3); }
+  .sensor-card.green { border-color: rgba(127,255,110,0.2); }
+  .sensor-card.cyan::before { background: var(--accent); }
+  .sensor-card.cyan { border-color: rgba(0,212,255,0.2); }
+  .sensor-card.gold::before { background: var(--gold); }
+  .sensor-card.gold { border-color: rgba(255,209,102,0.2); }
+  .sensor-card.red::before { background: var(--accent2); }
+  .sensor-card.red { border-color: rgba(255,77,109,0.2); }
+
+  .sensor-loc-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 0.85rem;
+  }
+  .sensor-card.green .sensor-loc-tag { background: rgba(127,255,110,0.1); color: var(--accent3); }
+  .sensor-card.cyan .sensor-loc-tag { background: rgba(0,212,255,0.1); color: var(--accent); }
+  .sensor-card.gold .sensor-loc-tag { background: rgba(255,209,102,0.1); color: var(--gold); }
+  .sensor-card.red .sensor-loc-tag { background: rgba(255,77,109,0.1); color: var(--accent2); }
+
+  .sensor-icon { font-size: 1.75rem; margin-bottom: 0.6rem; display: block; }
+  .sensor-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.03em;
+  }
+  .sensor-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+
+  /* optical flow deep dive */
+  .optical-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  @media (max-width: 680px) { .optical-grid { grid-template-columns: 1fr; } }
+
+  .optical-col {
+    background: var(--surface);
+    border: 1px solid rgba(127,255,110,0.15);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .optical-col h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.82rem;
+    color: var(--accent3);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.1rem;
+  }
+  .optical-list { list-style: none; }
+  .optical-list li {
+    font-size: 0.84rem;
+    color: var(--muted);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.55;
+  }
+  .optical-list li:last-child { border-bottom: none; }
+  .optical-list li::before {
+    content: '›';
+    position: absolute; left: 0;
+    color: var(--accent3);
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  /* env factors */
+  .env-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 680px) { .env-grid { grid-template-columns: 1fr; } }
+
+  .env-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .env-card .env-icon { font-size: 2.2rem; margin-bottom: 0.75rem; display: block; }
+  .env-card h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+  .env-card.temp { border-color: rgba(255,77,109,0.2); }
+  .env-card.temp h4 { color: var(--accent2); }
+  .env-card.pressure { border-color: rgba(0,212,255,0.2); }
+  .env-card.pressure h4 { color: var(--accent); }
+  .env-card.humidity { border-color: rgba(127,255,110,0.2); }
+  .env-card.humidity h4 { color: var(--accent3); }
+  .env-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+
+  .wbgt-box {
+    background: linear-gradient(135deg, rgba(255,77,109,0.06), rgba(0,212,255,0.06), rgba(127,255,110,0.06));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 3rem;
+    display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;
+  }
+  .wbgt-formula {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.75rem, 2vw, 1rem);
+    font-weight: 800;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .wbgt-formula .plus { color: var(--muted); margin: 0 0.4rem; }
+  .wbgt-formula .eq { color: var(--gold); margin: 0 0.5rem; }
+  .wbgt-formula .t { color: var(--accent2); }
+  .wbgt-formula .p { color: var(--accent); }
+  .wbgt-formula .h { color: var(--accent3); }
+  .wbgt-formula .result { color: var(--gold); }
+  .wbgt-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.7; flex: 1; min-width: 200px; }
+
+  /* stability algorithm */
+  .algo-box {
+    background: var(--surface);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .algo-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3), var(--accent2));
+  }
+  .algo-box h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  .algo-box p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; margin-bottom: 0.75rem; }
+  .algo-box p:last-child { margin-bottom: 0; }
+
+  .key-insight {
+    background: rgba(255,209,102,0.06);
+    border: 1px solid rgba(255,209,102,0.2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .key-insight strong { color: var(--gold); }
+
+  .quote-block {
+    background: rgba(0,0,0,0.3);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.8;
+    font-style: italic;
+  }
+
+  /* preflight checklist */
+  .preflight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .preflight-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .preflight-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 32px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .preflight-item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .preflight-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+  .caution-banner {
+    background: rgba(255,77,109,0.07);
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex; gap: 1rem; align-items: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .caution-banner .caution-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .caution-banner strong { color: var(--accent2); }
+
 </style>
 </head>
 <body>
@@ -830,6 +1099,7 @@
       <li><a href="#logbook">Logbook</a></li>
       <li><a href="#interview">Interview</a></li>
       <li><a href="#safety">Safety</a></li>
+      <li><a href="#codrone">CoDrone Sensors</a></li>
       <li><a href="#glossary">A-Z Terms</a></li>
     </ul>
   </div>
@@ -849,6 +1119,7 @@
     <li><a href="#logbook" class="drawer-link">📋 Logbook</a></li>
     <li><a href="#interview" class="drawer-link">🎤 Interview</a></li>
     <li><a href="#safety" class="drawer-link">🛡️ Safety</a></li>
+    <li><a href="#codrone" class="drawer-link">🔬 CoDrone Sensors</a></li>
     <li><a href="#glossary" class="drawer-link">🔤 A-Z Drone Terms</a></li>
   </ul>
 </div>
@@ -1267,6 +1538,178 @@
         <div class="metar-item"><span class="tag">RMK AO2</span><span>Remarks: automated station with precip sensor</span></div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- CODRONE EDU SENSORS -->
+<div class="divider"></div>
+<section id="codrone">
+  <div class="container">
+    <div class="section-label">// CODRONE EDU — ROBOLINK</div>
+    <h2 class="section-title">Sensors, Stability &amp; Flight Science</h2>
+    <p class="section-desc">A complete guide to how your CoDrone EDU senses the world, maintains stability, and why environmental conditions affect every single flight.</p>
+
+    <div class="codrone-header-strip">
+      <span class="drone-badge">CODRONE EDU · v3.2</span>
+      <p>The CoDrone EDU uses a combination of <strong style="color:var(--text)">five sensor systems</strong> working simultaneously — optical flow, range finders, barometric pressure, air flow, and IMU — to calculate a real-time stability algorithm that keeps the drone hovering. Understanding these sensors is critical to understanding why your drone behaves differently from day to day.</p>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">// SENSOR MAP</div>
+    <div class="sensor-map-grid">
+      <div class="sensor-card green">
+        <span class="sensor-loc-tag">BOTTOM · CENTER</span>
+        <span class="sensor-icon">🔍</span>
+        <h3>Optical Flow Sensor</h3>
+        <p>Downward-facing sensor that estimates the drone's X and Y position. Locks onto visual patterns to hold position and follow coded boundaries. Looks like a tiny cog/gear with a small shiny lens inside at the very center bottom of the drone.</p>
+      </div>
+      <div class="sensor-card cyan">
+        <span class="sensor-loc-tag">BOTTOM · UNDERSIDE</span>
+        <span class="sensor-icon">📡</span>
+        <h3>Bottom Range Sensor</h3>
+        <p>Reads the distance from the drone's underside to the nearest surface below — up to 1.5 meters. Controls altitude during hover and landing. Flying above 10 ft may cause this sensor to lose its surface lock.</p>
+      </div>
+      <div class="sensor-card gold">
+        <span class="sensor-loc-tag">FRONT · NOSE</span>
+        <span class="sensor-icon">↔️</span>
+        <h3>Front Range Sensor</h3>
+        <p>Reads the distance from the front of the drone to the nearest surface — up to 1.5 meters. Detects obstacles and maintains clearance during forward flight. Avoid flying too close to walls as turbulent airflow affects sensor accuracy.</p>
+      </div>
+      <div class="sensor-card cyan">
+        <span class="sensor-loc-tag">UNDERSIDE · LOUVERS</span>
+        <span class="sensor-icon">🌬️</span>
+        <h3>Air Flow Sensor</h3>
+        <p>Air is drawn in through the louver holes on the underside. The air flow sensor samples air pressure across all four propellers, measuring pressure differences to feed the real-time stability algorithm. Never block the louvers.</p>
+      </div>
+      <div class="sensor-card red">
+        <span class="sensor-loc-tag">INTERNAL · BOARD</span>
+        <span class="sensor-icon">🧭</span>
+        <h3>IMU (Barometric + Gyro)</h3>
+        <p>The Inertial Measurement Unit combines a barometric pressure sensor, gyroscope, and accelerometer. Tracks altitude, orientation, roll, pitch, and yaw. Barometric readings are continuously sampled through the louvers underneath the drone.</p>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">// OPTICAL FLOW SENSOR — DEEP DIVE</div>
+    <div class="optical-grid">
+      <div class="optical-col">
+        <h3>⚙️ HOW IT WORKS</h3>
+        <ul class="optical-list">
+          <li>Located at the very center bottom of the drone — looks like a tiny gear/cog with a small shiny lens inside</li>
+          <li>The sensor sits on a slip-fit cog/fastener — not a real gear — by design for crash protection</li>
+          <li>Locks onto visual reference points (e.g., green field lines) and follows them, centering the drone on the pattern</li>
+          <li>Measures distance to a color pad and can guide the drone through small targets when programmed via code</li>
+          <li>Sensor data can be read live from the drone during flight — use this to debug your flight code</li>
+          <li>You must write code to set a boundary (cage key mechanism) for the drone to follow field lines</li>
+        </ul>
+      </div>
+      <div class="optical-col">
+        <h3>🛡️ CRASH PROTECTION &amp; CARE</h3>
+        <ul class="optical-list">
+          <li>If the drone crashes, the sensor <strong style="color:var(--text)">slips downward</strong> rather than snapping or breaking — this is intentional design</li>
+          <li>Before activating, use your <strong style="color:var(--text)">fingernail to push the sensor back up</strong> into place in the cog</li>
+          <li>Never force it — gentle pressure is enough to reseat the sensor correctly</li>
+          <li>This intentional design means you rarely need to replace the sensor after minor crashes</li>
+          <li>Works best on well-lit, patterned floors — avoid dark carpets, reflective surfaces, or parallel-lined surfaces</li>
+          <li>Ensure no debris blocks the optical flow sensor or louvers before every flight</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">// ENVIRONMENTAL FACTORS</div>
+    <div class="env-grid">
+      <div class="env-card temp">
+        <span class="env-icon">🌡️</span>
+        <h4>TEMPERATURE</h4>
+        <p>Air temperature changes air density, directly affecting how propellers generate lift. <strong style="color:var(--text)">Hotter air = less dense air = less lift.</strong> The drone compensates in real-time, but performance varies day to day.</p>
+      </div>
+      <div class="env-card pressure">
+        <span class="env-icon">🌀</span>
+        <h4>BAROMETRIC PRESSURE</h4>
+        <p>Atmospheric pressure shifts affect altitude-hold and hover stability. The sensor continuously samples pressure <strong style="color:var(--text)">through the louvers underneath the drone</strong> to track these changes in real time.</p>
+      </div>
+      <div class="env-card humidity">
+        <span class="env-icon">💧</span>
+        <h4>HUMIDITY</h4>
+        <p>Humidity changes air density and the amount of moisture (condensate) in the air. Combined with temperature and pressure, it forms the <strong style="color:var(--text)">Wet Bulb Globe Reading</strong> used by the drone's stability algorithm.</p>
+      </div>
+    </div>
+
+    <div class="wbgt-box">
+      <div class="wbgt-formula">
+        <span class="t">TEMP</span>
+        <span class="plus">+</span>
+        <span class="p">PRESSURE</span>
+        <span class="plus">+</span>
+        <span class="h">HUMIDITY</span>
+        <span class="eq">=</span>
+        <span class="result">WBGT</span>
+      </div>
+      <p class="wbgt-desc">The <strong style="color:var(--gold)">Wet Bulb Globe Reading (WBGT)</strong> is the three-input calculation the CoDrone EDU uses to calibrate its real-time stability algorithm via the air flow sensor and louvers. All three values change daily — which is why your drone may behave differently even when your code is identical.</p>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">// THE STABILITY ALGORITHM</div>
+    <div class="algo-box">
+      <h3>🧠 How the Drone Stays Stable</h3>
+      <p>The air flow sensor samples air <strong style="color:var(--text)">across all four propellers simultaneously</strong>, measuring pressure differences and airflow velocity between the louvers on each side of the drone.</p>
+      <p>This data is combined with <strong style="color:var(--text)">all other sensors</strong> — optical flow, range finders, barometric, and IMU — to calculate a stability algorithm in real time. The combination of all sensors is how the computer samples data to produce a stable, hovering drone.</p>
+      <div class="key-insight">
+        <strong>💡 Key Insight:</strong> The stability value today will <em>not</em> be the same tomorrow. Temperature, pressure, and humidity are always changing. A flight program scoring 70 pts today may perform differently tomorrow — with <strong>identical code</strong>. The environment changed. Not your program.
+      </div>
+      <div class="quote-block">
+        "Did you ever notice when you set up your scheme to score 70 points and the next day you cannot score 70 points even though the values are the same? What did you do to change it? Nothing. The environment changes."
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-bottom:1rem;">// PRE-FLIGHT SENSOR CHECKLIST</div>
+    <div class="preflight-grid">
+      <div class="preflight-item">
+        <span class="preflight-num">01</span>
+        <div>
+          <h4>Bottom Sensors Clear</h4>
+          <p>Ensure no debris blocks the optical flow sensor, bottom range sensor, or louvers underneath the drone before every single flight.</p>
+        </div>
+      </div>
+      <div class="preflight-item">
+        <span class="preflight-num">02</span>
+        <div>
+          <h4>Optical Sensor Seated</h4>
+          <p>Push the optical flow sensor cog back into place with your fingernail before powering on the drone. Never skip this step after any crash.</p>
+        </div>
+      </div>
+      <div class="preflight-item">
+        <span class="preflight-num">03</span>
+        <div>
+          <h4>Fly on Patterned, Flat Surfaces</h4>
+          <p>The optical flow sensor works best on well-lit, patterned floors. Avoid dark carpets, reflective surfaces, or parallel-lined surfaces.</p>
+        </div>
+      </div>
+      <div class="preflight-item">
+        <span class="preflight-num">04</span>
+        <div>
+          <h4>Avoid Walls &amp; Vertical Surfaces</h4>
+          <p>Being too close to walls creates turbulent airflow that destabilizes the drone's air flow sensor readings.</p>
+        </div>
+      </div>
+      <div class="preflight-item">
+        <span class="preflight-num">05</span>
+        <div>
+          <h4>Note Environmental Conditions</h4>
+          <p>Temperature, pressure, and humidity change daily. Recalibrate expectations — your code is the same, but the air is not. Log conditions with each session.</p>
+        </div>
+      </div>
+      <div class="preflight-item">
+        <span class="preflight-num">06</span>
+        <div>
+          <h4>Keep Drone Below 10 ft</h4>
+          <p>Flying higher increases crash risk and can prevent the bottom range sensor from reading a surface for altitude hold. Stay low and in control.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="caution-banner">
+      <span class="caution-icon">⚠️</span>
+      <p><strong>CAUTION:</strong> The CoDrone EDU is designed for <strong>indoor use only.</strong> The drone cannot withstand wind. Always fly indoors in open spaces with adequate ceiling clearance. Never fly outdoors or near air vents/fans.</p>
+    </div>
+
   </div>
 </section>
 

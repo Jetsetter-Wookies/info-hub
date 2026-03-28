@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADC Mission 2026</title>
+<style>
+  /* Reset */
+  * { margin: 0; padding: 0; }
+  
+  body {
+    background: #060810;
+    color: #e8edf5;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  /* Navigation */
+  .nav {
+    background: #0d1120;
+    border-bottom: 1px solid #00d4ff;
+    padding: 10px;
+    position: relative;
+  }
+  
+  .nav-logo {
+    color: #00d4ff;
+    font-weight: bold;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  
+  .nav-links {
+    margin-top: 10px;
+  }
+  
+  .nav-links a {
+    display: inline-block;
+    color: #7a8ba8;
+    text-decoration: none;
+    font-size: 11px;
+    padding: 5px 8px;
+    margin: 2px;
+    background: #121828;
+    border: 1px solid #00d4ff;
+  }
+  
+  .nav-links a:hover {
+    color: #00d4ff;
+    background: #1a2030;
+  }
+  
+  /* Hero Section */
+  .hero {
+    text-align: center;
+    padding: 30px 15px;
+    background: #0d1120;
+  }
+  
+  .hero-badge {
+    display: inline-block;
+    background: #121828;
+    border: 1px solid #00d4ff;
+    padding: 5px 15px;
+    font-size: 11px;
+    color: #00d4ff;
+    margin-bottom: 15px;
+  }
+  
+  .hero h1 {
+    font-size: 24px;
+    color: #00d4ff;
+    margin-bottom: 15px;
+    line-height: 1.2;
+  }
+  
+  .hero-subtitle {
+    font-size: 14px;
+    color: #7a8ba8;
+    margin-bottom: 20px;
+  }
+  
+  .hero-cta {
+    display: inline-block;
+    background: #00d4ff;
+    color: #060810;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 13px;
+    margin: 5px;
+  }
+  
+  .hero-cta:hover {
+    background: #00b8e6;
+  }
+  
+  /* Section Container */
+  .section {
+    padding: 25px 15px;
+    background: #0d1120;
+    margin: 10px 0;
+  }
+  
+  .section-title {
+    font-size: 20px;
+    color: #00d4ff;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #00d4ff;
+  }
+  
+  .section-subtitle {
+    font-size: 13px;
+    color: #7a8ba8;
+    margin-bottom: 20px;
+  }
+  
+  /* Cards */
+  .card {
+    background: #121828;
+    border: 1px solid #00d4ff;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .card-title {
+    color: #00d4ff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .card-label {
+    font-size: 11px;
+    color: #7a8ba8;
+    margin-bottom: 5px;
+  }
+  
+  .card-text {
+    font-size: 13px;
+    color: #e8edf5;
+    line-height: 1.5;
+  }
+  
+  /* Lists */
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 10px;
+  }
+  
+  li {
+    margin-bottom: 8px;
+    color: #e8edf5;
+  }
+  
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 12px;
+  }
+  
+  th {
+    background: #121828;
+    color: #00d4ff;
+    padding: 8px;
+    border: 1px solid #00d4ff;
+    text-align: left;
+  }
+  
+  td {
+    background: #0d1120;
+    padding: 8px;
+    border: 1px solid #00d4ff;
+    color: #e8edf5;
+  }
+  
+  /* Accordion */
+  .accordion-btn {
+    width: 100%;
+    background: #121828;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 5px;
+  }
+  
+  .accordion-btn:hover {
+    background: #1a2030;
+  }
+  
+  .accordion-panel {
+    display: none;
+    background: #0d1120;
+    border: 1px solid #00d4ff;
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .accordion-panel.active {
+    display: block;
+  }
+  
+  /* Glossary */
+  .az-jump {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background: #121828;
+    color: #00d4ff;
+    border: 1px solid #00d4ff;
+    text-decoration: none;
+    font-size: 12px;
+    margin: 2px;
+  }
+  
+  .az-jump.no-terms {
+    color: #444;
+    border-color: #444;
+  }
+  
+  .term-card {
+    background: #121828;
+    border: 1px solid #00d4ff;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .term-name {
+    color: #00d4ff;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .term-def {
+    color: #e8edf5;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  
+  /* Footer */
+  footer {
+    background: #060810;
+    padding: 20px 15px;
+    text-align: center;
+    font-size: 11px;
+    color: #7a8ba8;
+    border-top: 1px solid #00d4ff;
+  }
+  
+  footer a {
+    color: #00d4ff;
+  }
+  
+  .footer-logo {
+    color: #00d4ff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav">
+  <a href="#" class="nav-logo">ADC 2026</a>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#rules">Rules</a>
+    <a href="#mission">Mission</a>
+    <a href="#scoring">Scoring</a>
+    <a href="#skills">Skills</a>
+    <a href="#glossary">Glossary</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">SEASON 2026</div>
+  <h1>Mission 2026<br>Time Warp</h1>
+  <div class="hero-subtitle">Aerial Drone Competition</div>
+  <a href="#overview" class="hero-cta">Get Started</a>
+  <a href="#mission" class="hero-cta">View Mission</a>
+</div>
+
+<!-- Overview -->
+<div class="section" id="overview">
+  <h2 class="section-title">Overview</h2>
+  <p class="section-subtitle">Welcome to ADC Mission 2026: Time Warp</p>
+  
+  <div class="card">
+    <div class="card-title">Competition Format</div>
+    <div class="card-text">
+      Teams of 2-4 students compete in teamwork challenges and individual skills challenges. Each match features two alliances working together to score points by navigating through time portals and collecting temporal artifacts.
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Key Objectives</div>
+    <ul>
+      <li>Navigate drone through time portals</li>
+      <li>Collect temporal artifacts</li>
+      <li>Score in designated zones</li>
+      <li>Complete precision maneuvers</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Rules Summary -->
+<div class="section" id="rules">
+  <h2 class="section-title">Rules Summary</h2>
+  
+  <div class="card">
+    <div class="card-title">General Rules</div>
+    <ul>
+      <li><strong>G1:</strong> Read and know the rules</li>
+      <li><strong>G2:</strong> Be respectful at all times</li>
+      <li><strong>G3:</strong> Robots must pass inspection before competing</li>
+      <li><strong>G4:</strong> Teams must be present for all scheduled matches</li>
+      <li><strong>G5:</strong> Safety is paramount - unsafe drones will be disqualified</li>
+    </ul>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Robot Specifications</div>
+    <table>
+      <tr>
+        <th>Spec</th>
+        <th>Requirement</th>
+      </tr>
+      <tr>
+        <td>Max Size</td>
+        <td>12" diameter</td>
+      </tr>
+      <tr>
+        <td>Weight</td>
+        <td>No limit</td>
+      </tr>
+      <tr>
+        <td>Battery</td>
+        <td>LiPo 3S max</td>
+      </tr>
+      <tr>
+        <td>Props</td>
+        <td>Safety guards required</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Mission -->
+<div class="section" id="mission">
+  <h2 class="section-title">Mission Details</h2>
+  
+  <div class="card">
+    <div class="card-title">Match Format</div>
+    <div class="card-text">
+      Each match is 2 minutes long with two phases:
+    </div>
+    <ul>
+      <li><strong>Autonomous (30 sec):</strong> Pre-programmed flight</li>
+      <li><strong>Driver Control (90 sec):</strong> Manual piloting</li>
+    </ul>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Field Elements</div>
+    <ul>
+      <li>Time Portals (4 locations)</li>
+      <li>Artifact Collection Zones (3 zones)</li>
+      <li>Temporal Gates (precision flying)</li>
+      <li>Landing Pads (bonus points)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Scoring -->
+<div class="section" id="scoring">
+  <h2 class="section-title">Scoring Guide</h2>
+  
+  <div class="card">
+    <div class="card-title">Point Values</div>
+    <table>
+      <tr>
+        <th>Action</th>
+        <th>Points</th>
+      </tr>
+      <tr>
+        <td>Portal Navigation</td>
+        <td>5 pts each</td>
+      </tr>
+      <tr>
+        <td>Artifact Collection</td>
+        <td>3 pts each</td>
+      </tr>
+      <tr>
+        <td>Gate Precision Flight</td>
+        <td>10 pts</td>
+      </tr>
+      <tr>
+        <td>Landing Pad (Auto)</td>
+        <td>15 pts</td>
+      </tr>
+      <tr>
+        <td>Landing Pad (Driver)</td>
+        <td>10 pts</td>
+      </tr>
+    </table>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Autonomous Bonus</div>
+    <div class="card-text">
+      Complete any scoring action during autonomous period for 2x points!
+    </div>
+  </div>
+</div>
+
+<!-- Skills Challenge -->
+<div class="section" id="skills">
+  <h2 class="section-title">Skills Challenge</h2>
+  
+  <div class="card">
+    <div class="card-title">Programming Skills</div>
+    <div class="card-text">
+      60 seconds of autonomous flight. Program your drone to complete as many scoring actions as possible without driver input.
+    </div>
+  </div>
+  
+  <div class="card">
+    <div class="card-title">Driver Skills</div>
+    <div class="card-text">
+      60 seconds of driver-controlled flight. Demonstrate precision piloting by completing the course as quickly and accurately as possible.
+    </div>
+  </div>
+</div>
+
+<!-- Glossary -->
+<div class="section" id="glossary">
+  <h2 class="section-title">Drone Glossary</h2>
+  <p class="section-subtitle">Essential drone terminology for competitors</p>
+  
+  <div id="azJumpGrid" style="margin-bottom:20px;"></div>
+  <div id="azAccordion"></div>
+</div>
+
+<script>
+// Glossary Data (abbreviated for 3DS)
+var glossaryData = {
+  "A": [
+    { term: "Autonomous", def: "Flight mode where the drone operates without human pilot input using pre-programmed instructions." },
+    { term: "Altitude Hold", def: "A flight mode that uses sensors to maintain a constant height above ground automatically." }
+  ],
+  "B": [
+    { term: "Battery", def: "Power source for the drone, typically Lithium Polymer (LiPo) rechargeable batteries." },
+    { term: "Brushless Motor", def: "Efficient electric motor type commonly used in racing and competition drones." }
+  ],
+  "C": [
+    { term: "Controller", def: "Handheld transmitter used by the pilot to control the drone remotely." },
+    { term: "Crash", def: "Unintended contact between drone and ground or obstacles. Part of learning!" }
+  ],
+  "D": [
+    { term: "Drone", def: "Unmanned aerial vehicle (UAV) controlled remotely or autonomously." },
+    { term: "Driver Control", def: "Flight phase where human pilot manually controls the drone via transmitter." }
+  ],
+  "F": [
+    { term: "FPV", def: "First Person View - flying while viewing live video feed from drone's onboard camera." },
+    { term: "Flight Controller", def: "The brain of the drone - processes sensor data and pilot inputs to control motors." }
+  ],
+  "G": [
+    { term: "GPS", def: "Global Positioning System - satellite navigation allowing drones to know precise location." },
+    { term: "Gyroscope", def: "Sensor that detects rotation and helps stabilize the drone during flight." }
+  ],
+  "L": [
+    { term: "LiPo", def: "Lithium Polymer battery - lightweight rechargeable power source for drones." },
+    { term: "Line of Sight", def: "Maintaining visual contact with drone during flight without goggles or screens." }
+  ],
+  "P": [
+    { term: "Pitch", def: "Tilting forward or backward - controls whether drone moves forward or backward." },
+    { term: "Propeller", def: "Spinning blades that generate thrust to lift and move the drone." }
+  ],
+  "Q": [
+    { term: "Quadcopter", def: "Drone with four propellers - most common configuration for competition drones." }
+  ],
+  "R": [
+    { term: "Roll", def: "Tilting left or right - controls sideways movement of the drone." },
+    { term: "RTF", def: "Ready to Fly - drone comes complete with everything needed, no assembly required." }
+  ],
+  "T": [
+    { term: "Throttle", def: "Control that increases or decreases motor speed and altitude." },
+    { term: "Trim", def: "Fine adjustment to compensate for drift and keep drone stable when hovering." }
+  ],
+  "Y": [
+    { term: "Yaw", def: "Rotation around vertical axis - turns drone left or right while maintaining position." }
+  ]
+};
+
+// Build Glossary
+(function() {
+  var jumpGrid = document.getElementById('azJumpGrid');
+  var accordion = document.getElementById('azAccordion');
+  var allLetters = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+  
+  // Create letter jump links
+  for (var i = 0; i < allLetters.length; i++) {
+    var letter = allLetters[i];
+    var hasTerms = glossaryData[letter] ? true : false;
+    var a = document.createElement('a');
+    a.href = '#az-' + letter;
+    a.className = 'az-jump' + (hasTerms ? '' : ' no-terms');
+    a.innerHTML = letter;
+    jumpGrid.appendChild(a);
+  }
+  
+  // Build accordion
+  for (var letter in glossaryData) {
+    if (!glossaryData.hasOwnProperty(letter)) continue;
+    
+    var termList = glossaryData[letter];
+    var btn = document.createElement('button');
+    btn.className = 'accordion-btn';
+    btn.id = 'az-' + letter;
+    btn.innerHTML = letter + ' (' + termList.length + ' terms)';
+    btn.setAttribute('data-letter', letter);
+    
+    var panel = document.createElement('div');
+    panel.className = 'accordion-panel';
+    
+    for (var j = 0; j < termList.length; j++) {
+      var term = termList[j];
+      var card = document.createElement('div');
+      card.className = 'term-card';
+      card.innerHTML = '<div class="term-name">' + term.term + '</div><div class="term-def">' + term.def + '</div>';
+      panel.appendChild(card);
+    }
+    
+    accordion.appendChild(btn);
+    accordion.appendChild(panel);
+    
+    // Add click handler
+    btn.onclick = function() {
+      var panel = this.nextElementSibling;
+      var isActive = panel.className.indexOf('active') !== -1;
+      
+      // Close all panels
+      var allPanels = document.getElementsByClassName('accordion-panel');
+      for (var k = 0; k < allPanels.length; k++) {
+        allPanels[k].className = 'accordion-panel';
+      }
+      
+      // Open this panel if it wasn't active
+      if (!isActive) {
+        panel.className = 'accordion-panel active';
+      }
+    };
+  }
+})();
+</script>
+
+<footer>
+  <div class="footer-logo">ADC // RECF</div>
+  <p>
+    <strong>Aerial Drone Competition</strong><br>
+    Robotics Education & Competition Foundation<br>
+    Mission 2026 Time Warp<br><br>
+    <a href="https://drones.recf.org">drones.recf.org</a><br>
+    <a href="https://recf.org/adc-official-q-and-a">Official Q&A</a>
+  </p>
+</footer>
+
+</body>
+</html>
